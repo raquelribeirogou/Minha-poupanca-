@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Poupança">
+<meta name="theme-color" content="#f6f4ef">
+<link rel="manifest" href="manifest.json">
+<title>💰 A minha poupança</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f6f4ef;color:#242424;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Arial,sans-serif}
+main{max-width:760px;margin:auto;padding:20px 14px 50px}.top h1{font-size:28px;margin:0}.top p{margin:5px 0 18px;color:#777}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#fff;border:1px solid #e2ded5;border-radius:18px;padding:15px;margin-bottom:12px}.label{font-size:13px;color:#777}.total{font-size:25px;font-weight:750;margin-top:4px}h2{font-size:19px;margin:0 0 12px}
+.goal{border:1px solid #e2ded5;border-radius:16px;padding:14px;margin:10px 0}.goal-title{font-size:18px;font-weight:750}.goal-meta{font-size:13px;color:#777;margin-top:3px}.barbg{height:9px;background:#ece9e2;border-radius:20px;overflow:hidden;margin:12px 0}.bar{height:100%;background:#2f6f52}.stats{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:14px}.today{margin-top:12px;padding:12px;border-radius:13px;background:#eef6f0}.todayline{display:flex;justify-content:space-between;align-items:center;gap:10px}.amount{font-size:21px;font-weight:750}
+button{font:inherit;border:0;border-radius:11px;min-height:44px;padding:9px 13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}.done{background:#2f6f52;color:#fff}.undone{background:#fff;border:1px solid #d9d5cc;color:#333}.smallbtn{min-height:38px;font-size:13px}.days{margin-top:12px;display:flex;flex-direction:column;gap:7px}.day{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid #e2ded5;border-radius:12px;padding:9px;background:#fff}.day.done-row{background:#eef6f0}.dayleft{min-width:0}.daydate{font-weight:650}.muted{font-size:12px;color:#777}.extra-row{display:grid;grid-template-columns:1fr auto;gap:8px}input{width:100%;min-height:45px;border:1px solid #ded9d0;border-radius:11px;background:#fff;padding:9px 10px;font-size:16px}.note{font-size:13px;color:#777;line-height:1.45}.history-item{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:9px 0}.compact-goal-section h2{margin-bottom:8px}.compact-goal{border:1px solid #e2ded5;border-radius:16px;padding:12px;background:#fff}.compact-info{margin-bottom:9px}.compact-info .goal-title{font-size:21px}.compact-info .goal-meta{font-size:14px;margin-top:2px}.compact-today{display:flex;justify-content:space-between;align-items:center;gap:10px}.expand-btn{width:100%;margin-top:9px}.compact-goal .days{margin-top:9px}
+@media(max-width:500px){.todayline{align-items:stretch;flex-direction:column}.todayline button{width:100%}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><h1>💰 A minha poupança</h1><p>Agora sim: cada dia tem o seu botão. 😏</p><div class="muted">📅 A partir de <b>23/09/2026</b>. Conta todos os dias, <b>exceto segundas-feiras</b>.</div></div>
+
+<div class="grid">
+<div class="card"><div class="label">Total poupado</div><div id="total" class="total">0,00 €</div></div>
+<div class="card"><div class="label">Extras</div><div id="extrasTotal" class="total">0,00 €</div></div>
+</div>
+
+<section class="card compact-goal-section">
+<h2>🎁 Prendas</h2>
+<div class="compact-goal">
+  <div class="compact-info">
+    <div class="goal-title">750,00 €</div>
+    <div class="goal-meta">Prazo: 01/12/2026</div>
+  </div>
+  <div class="compact-today">
+    <span class="muted">Hoje: <b id="giftTodayAmount">13,64 €</b></span>
+    <button id="giftTodayBtn" class="done smallbtn">✅ Concluído</button>
+  </div>
+  <div id="giftDays" class="days"></div>
+  <button id="giftMore" class="undone smallbtn expand-btn">Mostrar mais dias</button>
+</div>
+</section>
+
+<section class="card compact-goal-section">
+<h2>🌴 Férias</h2>
+<div class="compact-goal">
+  <div class="compact-info">
+    <div class="goal-title">3.000,00 €</div>
+    <div class="goal-meta">Prazo: 01/07/2027</div>
+  </div>
+  <div class="compact-today">
+    <span class="muted">Hoje: <b id="holidayTodayAmount">13,46 €</b></span>
+    <button id="holidayTodayBtn" class="done smallbtn">✅ Concluído</button>
+  </div>
+  <div id="holidayDays" class="days"></div>
+  <button id="holidayMore" class="undone smallbtn expand-btn">Mostrar mais dias</button>
+</div>
+</section>
+
+
+<section class="card">
+<h2>🎯 Os meus objetivos</h2>
+<p class="note">Cria quantos objetivos quiseres. Cada objetivo é independente e calcula automaticamente o valor necessário por dia, a partir da data em que forem criados, excluindo segundas-feiras.</p>
+<div class="goal">
+<label class="muted">Nome do objetivo</label>
+<input id="newGoalName" type="text" placeholder="Ex.: Seguro do carro">
+<label class="muted">Valor da meta (€)</label>
+<input id="newGoalAmount" type="number" min="0.01" step="0.01" placeholder="Ex.: 500">
+<label class="muted">Prazo</label>
+<input id="newGoalDate" type="date">
+<button id="addGoalBtn" class="done" style="width:100%;margin-top:8px">➕ Adicionar objetivo</button>
+<div id="goalMessage" class="note" style="margin-top:8px"></div>
+</div>
+<div id="customGoals"></div>
+</section>
+
+<section class="card"><h2>➕ Objetivo extra</h2>
+<div class="extra-row"><input id="extraInput" type="number" min="0" step="0.01" placeholder="Ex.: 20 €"><button id="extraBtn" class="done">Adicionar</button></div>
+<p class="note">Este valor fica separado dos 30 € previstos.</p><div id="extraList"></div></section>
+
+<section class="card"><h2>📅 Histórico</h2><div id="history"></div></section>
+</main>
+
+<script>
+(function(){
+var KEY="poupanca_pwa_v2";
+var TODAY=new Date().toISOString().slice(0,10);
+var START="2026-09-23";
+
+var state=JSON.parse(localStorage.getItem(KEY)||'null')||{
+ gift:{days:{}},holiday:{days:{}},extras:[],customGoals:[]
+};
+
+/* Import existing data from the previous PWA version once. */
+if(!localStorage.getItem(KEY)){
+ try{
+   var old=JSON.parse(localStorage.getItem("poupanca_pwa_v1")||"null");
+   if(old){
+     state.gift=old.gift||state.gift;
+     state.holiday=old.holiday||state.holiday;
+     state.extras=old.extras||[];
+   }
+ }catch(e){}
+}
+
+function money(n){return new Intl.NumberFormat("pt-PT",{style:"currency",currency:"EUR"}).format(Number(n)||0)}
+function sum(o){var n=0;Object.keys(o||{}).forEach(function(k){n+=Number(o[k])||0});return n}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function iso(d){return d.toISOString().slice(0,10)}
+
+function excluded(s){
+ var d=new Date(s+"T12:00:00");
+ return d.getDay()===1;
+}
+
+function eligibleCount(from,to){
+ var n=0,d=new Date(from+"T12:00:00"),e=new Date(to+"T12:00:00");
+ while(d<=e){
+   if(!excluded(iso(d)))n++;
+   d.setDate(d.getDate()+1);
+ }
+ return n;
+}
+
+function customSaved(g){return sum(g.days||{})}
+
+function toggle(type,s){
+ var a=type==="gift"
+   ?(new Date(s+"T12:00:00")<new Date("2026-12-01T12:00:00")?13.64:0)
+   :(new Date(s+"T12:00:00")<new Date("2026-12-01T12:00:00")?13.46:27.10);
+ if(state[type].days[s]!=null)delete state[type].days[s];
+ else if(a>0)state[type].days[s]=a;
+ save();render();
+}
+
+function toggleFixed(id,target,deadline){
+ var map=state[id],total=sum(map),left=Math.max(0,target-total),n=eligibleCount(START,deadline);
+ var a=left/Math.max(1,n);
+ if(map[TODAY]!=null)delete map[TODAY];else map[TODAY]=Math.round(a*100)/100;
+ save();render();
+}
+
+function toggleCustom(id){
+ var g=state.customGoals.find(function(x){return x.id===id});
+ if(!g)return;
+ var left=Math.max(0,g.target-customSaved(g));
+ var n=eligibleCount(TODAY,g.deadline);
+ var a=left/Math.max(1,n);
+ if(g.days[TODAY]!=null)delete g.days[TODAY];
+ else if(a>0)g.days[TODAY]=Math.round(a*100)/100;
+ save();render();
+}
+
+function deleteCustom(id){
+ state.customGoals=state.customGoals.filter(function(g){return g.id!==id});
+ save();render();
+}
+
+function renderGoal(type){
+ var g=state[type],s=sum(g.days),target=type==="gift"?750:3000,left=Math.max(0,target-s);
+ var a=type==="gift"
+   ?(new Date(TODAY+"T12:00:00")<new Date("2026-12-01T12:00:00")?13.64:0)
+   :(new Date(TODAY+"T12:00:00")<new Date("2026-12-01T12:00:00")?13.46:27.10);
+ var b=document.getElementById(type+"TodayBtn"),checked=g.days[TODAY]!=null;
+ document.getElementById(type+"TodayAmount").textContent=money(a);
+ b.textContent=checked?"↩️ Desmarcar":"✅ Concluído";
+ b.className=checked?"undone":"done";
+ b.onclick=function(){toggle(type,TODAY)};
+}
+
+
+function renderCustomGoals(){
+ var box=document.getElementById("customGoals");
+ if(!state.customGoals.length){
+   box.innerHTML='<p class="muted">Ainda não tens objetivos personalizados.</p>';
+   return;
+ }
+ box.innerHTML="";
+ state.customGoals.forEach(function(g){
+   var saved=customSaved(g),left=Math.max(0,g.target-saved);
+   var n=eligibleCount(g.start||TODAY,g.deadline),daily=left/Math.max(1,n);
+   var done=saved>=g.target,checked=g.days[TODAY]!=null;
+   var card=document.createElement("div");
+   card.className="goal";
+   card.innerHTML=
+     '<div class="goal-title">🎯 '+escapeHtml(g.name)+'</div>'+
+     '<div class="goal-meta">Meta: '+money(g.target)+' · prazo: '+g.deadline+' · início: '+(g.start||TODAY)+'</div>'+
+     '<div class="barbg"><div class="bar" style="width:'+Math.min(100,saved/g.target*100)+'%"></div></div>'+
+     '<div class="stats"><span>Já poupado: <b>'+money(saved)+'</b></span><span>Falta: <b>'+money(left)+'</b></span></div>'+
+     '<div class="stats"><span>Necessário: <b>'+money(daily)+'/dia</b></span></div>'+
+     '<div class="today"><div class="todayline"><div><div class="muted">Hoje</div><div class="amount">'+money(daily)+'</div></div>'+
+     '<button class="'+(checked?"undone":"done")+' custom-done">'+(checked?"↩️ Desmarcar":"✅ Concluído")+'</button></div></div>'+
+     '<button class="undone smallbtn custom-delete" style="margin-top:8px">🗑️ Remover objetivo</button>';
+   card.querySelector(".custom-done").onclick=function(){toggleCustom(g.id)};
+   card.querySelector(".custom-delete").onclick=function(){
+     if(confirm("Remover o objetivo «"+g.name+"»? Os outros objetivos não serão alterados."))deleteCustom(g.id);
+   };
+   box.appendChild(card);
+ });
+}
+
+function escapeHtml(s){
+ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]});
+}
+
+function renderDays(type,count){
+ var box=document.getElementById(type+"Days"),d=new Date(START+"T12:00:00"),a=[];
+ while(a.length<count){
+   var s=iso(d);
+   if(!excluded(s))a.push(s);
+   d.setDate(d.getDate()+1);
+ }
+ box.innerHTML="";
+ a.forEach(function(s){
+   var amount=type==="gift"
+     ?(new Date(s+"T12:00:00")<new Date("2026-12-01T12:00:00")?13.64:0)
+     :(new Date(s+"T12:00:00")<new Date("2026-12-01T12:00:00")?13.46:27.10);
+   var c=state[type].days[s]!=null,row=document.createElement("div");
+   row.className="day "+(c?"done-row":"");
+   row.innerHTML="<div class='dayleft'><div class='daydate'>"+s+"</div><div class='muted'>"+money(amount)+"</div></div><button class='"+(c?"undone":"done")+" smallbtn'>"+(c?"✓ Feito":"Concluído")+"</button>";
+   row.querySelector("button").onclick=function(){toggle(type,s)};
+   box.appendChild(row);
+ });
+}
+
+function renderHistory(){
+ var h=document.getElementById("history"),r=[];
+ Object.keys(state.gift.days).forEach(function(d){r.push([d,"🎁 Prendas",state.gift.days[d]])});
+ Object.keys(state.holiday.days).forEach(function(d){r.push([d,"🌴 Férias",state.holiday.days[d]])});
+ state.customGoals.forEach(function(g){Object.keys(g.days).forEach(function(d){r.push([d,"🎯 "+g.name,g.days[d]])})});
+ state.extras.forEach(function(x){r.push([x.date,"➕ Extra",x.amount])});
+ r.sort(function(a,b){return b[0].localeCompare(a[0])});
+ h.innerHTML=r.length?r.slice(0,80).map(function(x){return "<div class='history-item'><span>"+x[0]+" · "+escapeHtml(x[1])+"</span><b>"+money(x[2])+"</b></div>"}).join(""):"<div class='muted'>Ainda não tens dias concluídos.</div>";
+}
+
+function render(){
+ var g=sum(state.gift.days),h=sum(state.holiday.days),e=state.extras.reduce(function(a,x){return a+Number(x.amount||0)},0);
+ document.getElementById("total").textContent=money(g+h+e);
+ document.getElementById("extrasTotal").textContent=money(e);
+ renderGoal("gift");renderGoal("holiday");
+ renderCustomGoals();
+ renderDays("gift",giftExpanded?30:1);renderDays("holiday",holidayExpanded?30:1);renderHistory();
+}
+
+document.getElementById("addGoalBtn").onclick=function(){
+ var name=document.getElementById("newGoalName").value.trim();
+ var target=Number(document.getElementById("newGoalAmount").value);
+ var deadline=document.getElementById("newGoalDate").value;
+ var msg=document.getElementById("goalMessage");
+
+ if(!name||!(target>0)||!deadline){
+   msg.textContent="Preenche o nome, o valor e o prazo.";
+   return;
+ }
+ if(deadline<TODAY){
+   msg.textContent="O prazo tem de ser hoje ou uma data futura.";
+   return;
+ }
+ var id="goal_"+Date.now();
+ state.customGoals.push({id:id,name:name,target:Math.round(target*100)/100,deadline:deadline,start:TODAY,days:{}});
+ document.getElementById("newGoalName").value="";
+ document.getElementById("newGoalAmount").value="";
+ document.getElementById("newGoalDate").value="";
+ msg.textContent="Objetivo adicionado. Os objetivos anteriores não foram alterados.";
+ save();render();
+};
+
+var giftExpanded=false, holidayExpanded=false;
+document.getElementById("giftMore").onclick=function(){
+  giftExpanded=!giftExpanded;
+  renderDays("gift",giftExpanded?30:1);
+  this.textContent=giftExpanded?"Mostrar menos dias":"Mostrar mais dias";
+};
+document.getElementById("holidayMore").onclick=function(){
+  holidayExpanded=!holidayExpanded;
+  renderDays("holiday",holidayExpanded?30:1);
+  this.textContent=holidayExpanded?"Mostrar menos dias":"Mostrar mais dias";
+};
+document.getElementById("extraBtn").onclick=function(){
+ var n=Number(document.getElementById("extraInput").value);
+ if(n>0){state.extras.push({date:TODAY,amount:Math.round(n*100)/100});document.getElementById("extraInput").value="";save();render()}
+};
+
+render();
+})();
+</script>
+</body>
+</html>
